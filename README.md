@@ -16,7 +16,8 @@ This license has been approved by
 ## Requirements
 
 On Debian systems the following packages are required:
-	openssh-client
+
+    openssh-client
 
 ## Usage
 
