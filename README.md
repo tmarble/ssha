@@ -21,11 +21,13 @@ On Debian systems the following packages are required:
 ## Usage
 
 First terminal:
+
     $ ssha start # start the ssh-agent
 	$ ssh-add    # add your private key material
 	$ ssh host-which-has-my-key
 	
 Second and subsequent terminal:
+
     $ ssha connect # connect to the running ssh-agent
 	$ ssh host-which-has-my-key
 	
