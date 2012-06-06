@@ -34,10 +34,22 @@ Second and subsequent terminal:
 
 ## Scripting
 
+You can call ssha from other scripts (see also [sshatest](https://raw.github.com/tmarble/ssha/master/sshatest))
+
     ssha_functions=true
     . /path/to/ssha
     if do_ssha_connect; then
       echo "connected to the ssh-agent"
     else
-      echo "WARNING: NOT connected to the ssh-agent"
+      echo "WARNING: NOT connected to the ssh-agent, starting one now..."
+      do_ssha_start
+      if [ $? -eq 2 ]; then
+        # ssh-agent is running, but does not have any identities
+        # assume a passwordless ssh key
+        echo "adding key to ssh-agent..."
+        if ! ssh-add; then
+          echo "ssh key could not be added to ssh-agent (is it passwordless?)."
+          exit 1
+        fi
+      fi
     fi

@@ -1,0 +1,22 @@
+#!/bin/sh
+# sshatest
+
+program=$(basename $0)
+dir=$(dirname $0)
+. $dir/ssha
+
+verbose_ssha="--verbose"
+if do_ssha_connect; then
+  echo "connected to the ssh-agent"
+else
+  echo "WARNING: NOT connected to the ssh-agent, starting one now..."
+  do_ssha_start
+fi
+if ! do_ssha_check; then
+  echo "adding key to ssh-agent..."
+  if ! ssh-add; then
+    echo "ssh key could not be added to ssh-agent (is it passwordless?)."
+    exit 1
+  fi
+fi
+echo "ready for ssh operations"
