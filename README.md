@@ -41,4 +41,3 @@ Second and subsequent terminal:
     else
       echo "WARNING: NOT connected to the ssh-agent"
     fi
-
