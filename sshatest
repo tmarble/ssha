@@ -3,6 +3,8 @@
 
 program=$(basename $0)
 dir=$(dirname $0)
+
+# This script assumes that ssha is in the same directory
 . $dir/ssha
 
 verbose_ssha="--verbose"
