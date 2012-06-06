@@ -32,3 +32,13 @@ Second and subsequent terminal:
     $ ssha connect # connect to the running ssh-agent
 	$ ssh host-which-has-my-key
 
+## Scripting
+
+    ssha_functions=true
+    . /path/to/ssha
+    if do_ssha_connect; then
+      echo "connected to the ssh-agent"
+    else
+      echo "WARNING: NOT connected to the ssh-agent"
+    fi
+
