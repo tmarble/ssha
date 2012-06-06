@@ -22,3 +22,4 @@ if ! do_ssha_check; then
   fi
 fi
 echo "ready for ssh operations"
+# ssh, scp, rsync...
