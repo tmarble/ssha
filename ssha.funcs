@@ -1,0 +1,11 @@
+#!/bin/sh
+# ssha.funcs
+# The purpose of these functions is to insure that SSH related
+# environment variables take effect *in* your current interactive shell.
+# Other commands can be run with just ssha
+
+function ssha_fun() { ssha_functions=true; verbose_ssha=--verbose; . ~/bin/ssha; do_ssha_$1; unset ssha_functions; unset verbose_ssha;}
+function ssha_connect() { ssha_fun connect; }
+function ssha_start() { ssha_fun start; }
+function ssha_passwordless() { ssha_fun passwordless; }
+
