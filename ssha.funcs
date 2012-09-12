@@ -21,4 +21,3 @@ ssh_ready() {
   fi
   return 0
 }
-
