@@ -13,3 +13,4 @@ sshafuncs=$dir/ssha.funcs
 if ssh_ready; then
   echo "ready for ssh operations such as ssh, scp, rsync..."
 fi
+
