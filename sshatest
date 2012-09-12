@@ -6,19 +6,9 @@ dir=$(dirname $0)
 
 # This script assumes that ssha is in the same directory
 ssha=$dir/ssha
+sshafuncs=$dir/ssha.funcs
 
-ssh_ready() {
-  ssha_functions="true"
-  verbose_ssha="$verbose"
-  . $ssha
-  if do_ssha_passwordless; then
-    echo "ssh-agent ready"
-  else
-    echo "ssh-agent NOT ready"
-    return 1
-  fi
-  return 0
-}
+. $sshafuncs
 
 if ssh_ready; then
   echo "ready for ssh operations such as ssh, scp, rsync..."
