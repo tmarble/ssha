@@ -53,3 +53,8 @@ You can call ssha from other scripts (see also [sshatest](https://raw.github.com
         fi
       fi
     fi
+
+## Notes
+
+One common use case is to do **ssha connect** when re-logging in
+to a server to connect to an already running agent.
