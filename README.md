@@ -21,15 +21,23 @@ On Debian systems the following packages are required:
 
 ## Usage
 
+One time configuration (e.g. in your ~/.bashrc):
+```
+SSHA_HOME=$HOME/src/github/tmarble/ssha
+export ssha=$SSHA_HOME/ssha
+alias ssha=$SSHA_HOME/ssha
+. $SSHA_HOME/ssha.funcs
+```
+
 First terminal:
 
-    $ ssha start # start the ssh-agent
+    $ ssha_start # start the ssh-agent
 	$ ssh-add    # add your private key material
 	$ ssh host-which-has-my-key
-	
+
 Second and subsequent terminal:
 
-    $ ssha connect # connect to the running ssh-agent
+    $ ssha_connect # connect to the running ssh-agent
 	$ ssh host-which-has-my-key
 
 ## Scripting
@@ -38,24 +46,31 @@ You can call ssha from other scripts (see also [sshatest](https://raw.github.com
 
     ssha_functions=true
     . /path/to/ssha
-    if do_ssha_connect; then
-      echo "connected to the ssh-agent"
+    if do_ssha_passwordless; then
+      echo "connected to the ssh-agent with cached credentials"
     else
-      echo "WARNING: NOT connected to the ssh-agent, starting one now..."
-      do_ssha_start
-      if [ $? -eq 2 ]; then
-        # ssh-agent is running, but does not have any identities
-        # assume a passwordless ssh key
-        echo "adding key to ssh-agent..."
-        if ! ssh-add; then
-          echo "ssh key could not be added to ssh-agent (is it passwordless?)."
-          exit 1
-        fi
-      fi
+      echo "error: ssh key could not be added to ssh-agent (is it passwordless?)."
     fi
 
-## Notes
+## NOTES
 
-One common use case is to do **ssha connect** when re-logging in
-to a server to connect to an already running agent.
+A very typical use case is re-connecting to a long running session
 
+```
+tmarble@laptop $ ssh remoteserver
+tmarble@remoteserver $ ssh_ready
+ssh-agent ready
+tmarble@remoteserver $ ssh thirdserver uptime
+ 17:59:57 up 11:07,  8 users,  load average: 0.04, 0.10, 0.13
+tmarble@remoteserver $
+```
+
+Another common case would be remotely logging into cloud machines.
+One way to avoid excessive host checks for changing IP's is
+to add the following to your ```~/.ssh.config```:
+```
+Host *.amazonaws.com
+   StrictHostKeyChecking no
+   UserKnownHostsFile /dev/null
+   LogLevel QUIET
+```

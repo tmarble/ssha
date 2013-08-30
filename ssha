@@ -31,6 +31,7 @@ usage: ssha [OPTIONS] ACTION
          start
          stop
          restart
+         passwordless
        OPTIONS
            [-v]        verbose
          [-h]        help
@@ -78,7 +79,7 @@ do_ssha_connect() {
     do_ssha_check
     rv=$?
   else
-    vecho_ssha "file not found: $sshinfo"     
+    vecho_ssha "file not found: $sshinfo"
     rv=1
   fi
   if [ $rv -eq 1 ]; then
@@ -151,7 +152,7 @@ do_ssha_start() {
                     if [ $check -eq 2 ]; then
                         vecho_ssha "Connected to a running SSH agent without key(s)"
                         return 2
-                        
+
                     else
                         do_ssha_start_agent
                     fi
@@ -199,6 +200,7 @@ do_ssha_restart() {
 }
 
 do_ssha_passwordless() {
+  local rv=0
   if do_ssha_connect; then
     vecho_ssha "connected to the ssh-agent"
   else
@@ -209,8 +211,10 @@ do_ssha_passwordless() {
     vecho_ssha "adding key to ssh-agent..."
     if ! ssh-add > /dev/null 2>&1 ; then
       err "ssh key could not be added to ssh-agent (is it passwordless?)."
+      rv=1
     fi
   fi
+  return $rv
 }
 
 validaction() {
