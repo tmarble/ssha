@@ -6,7 +6,15 @@
 
 # the following will not work since we are sourcing this file
 # program=$(basename $0)
-sshinfo=$HOME/.ssh-agent-info
+ssh_dir="$HOME/.ssh"
+sshinfo="$ssh_dir/.ssh-agent-info"
+kernel_name="$(uname --kernel-name)"
+
+if [ ! -d "$ssh_dir" ]; then
+    echo "error: ssh directory does not exist: $ssh_dir"
+    # do NOT exit.. this file may be sourced!
+    # exit 1
+fi
 
 vecho_ssha() {
   [ -z "$verbose_ssha" ]  || echo >&2 "$@"
@@ -34,15 +42,16 @@ usage: ssha [OPTIONS] ACTION
          passwordless
        OPTIONS
            [-v]        verbose
-         [-h]        help
+           [-h]        help
            [-f]        force (for forcing a new instance)
 EOF
 }
 
 showenv_ssha() {
+  echo SSHA=${SSHA:-"unset"}
+  echo SSHA_HOME=${SSHA_HOME:-"unset"}
   echo SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-"unset"}
   echo SSH_AGENT_PID=${SSH_AGENT_PID:-"unset"}
-  echo SSHA=${SSHA:-"unset"}
 }
 
 do_ssha_check() {
@@ -61,7 +70,7 @@ do_ssha_check() {
       unset SSH_AUTH_SOCK
       unset SSH_AGENT_PID
       unset SSHA
-      rm -f $sshinfo
+      rm -f "$sshinfo"
       return 1
     fi
   fi
@@ -71,15 +80,15 @@ do_ssha_check() {
 do_ssha_connect() {
   local rv=0
   vecho_ssha "--- ssha connect ---"
-  if [ -r "$sshinfo" ]; then
-    . $sshinfo
+  if [ -r ""$sshinfo"" ]; then
+    . "$sshinfo"
     export SSH_AUTH_SOCK
     export SSH_AGENT_PID
     export SSHA
     do_ssha_check
     rv=$?
   else
-    vecho_ssha "file not found: $sshinfo"
+    vecho_ssha "file not found: "$sshinfo""
     rv=1
   fi
   if [ $rv -eq 1 ]; then
@@ -90,30 +99,32 @@ do_ssha_connect() {
       # echo checking this agent... $agent
       export SSH_AUTH_SOCK="$agent"
       export SSH_AGENT_PID=$(echo $agent | cut -d. -f2)
-      if [ -e "/proc/$SSH_AGENT_PID/comm" ]; then
-        comm="$(cat /proc/$SSH_AGENT_PID/comm)"
-      else
-        comm=""
-      fi
-      if [ "$comm" != "ssh-agent" ]; then
-        # try one pid higher
-        export SSH_AGENT_PID=$(($SSH_AGENT_PID + 1))
-        if [ -e "/proc/$SSH_AGENT_PID/comm" ]; then
-          comm="$(cat /proc/$SSH_AGENT_PID/comm)"
-        else
-          comm=""
-        fi
-        if [ "$comm" != "ssh-agent" ]; then
-	  unset SSH_AGENT_PID
-        fi
+      if [ "$kernel_name" = "Linux" ]; then
+          if [ -e "/proc/$SSH_AGENT_PID/comm" ]; then
+              comm="$(cat /proc/$SSH_AGENT_PID/comm)"
+          else
+              comm=""
+          fi
+          if [ "$comm" != "ssh-agent" ]; then
+              # try one pid higher
+              export SSH_AGENT_PID=$(($SSH_AGENT_PID + 1))
+              if [ -e "/proc/$SSH_AGENT_PID/comm" ]; then
+                  comm="$(cat /proc/$SSH_AGENT_PID/comm)"
+              else
+                  comm=""
+              fi
+              if [ "$comm" != "ssh-agent" ]; then
+	          unset SSH_AGENT_PID
+              fi
+          fi
       fi
       do_ssha_check
       rv=$?
       if [ $rv -ne 1 ]; then
         vecho_ssha "found and connected to a running ssh-agent"
         export SSHA="$(date)"
-        echo SSH_AUTH_SOCK=${SSH_AUTH_SOCK} > $sshinfo
-        echo SSH_AGENT_PID=${SSH_AGENT_PID} >> $sshinfo
+        echo SSH_AUTH_SOCK=${SSH_AUTH_SOCK} > "$sshinfo"
+        echo SSH_AGENT_PID=${SSH_AGENT_PID} >> "$sshinfo"
       fi
     fi
   fi
@@ -126,8 +137,8 @@ do_ssha_start_agent() {
     export SSH_AUTH_SOCK
     export SSH_AGENT_PID
     export SSHA="$(date)"
-    echo SSH_AUTH_SOCK=${SSH_AUTH_SOCK} > $sshinfo
-    echo SSH_AGENT_PID=${SSH_AGENT_PID} >> $sshinfo
+    echo SSH_AUTH_SOCK=${SSH_AUTH_SOCK} > "$sshinfo"
+    echo SSH_AGENT_PID=${SSH_AGENT_PID} >> "$sshinfo"
 }
 
 do_ssha_start() {
@@ -183,7 +194,7 @@ do_ssha_stop() {
         unset SSH_AUTH_SOCK
         unset SSH_AGENT_PID
         unset SSHA
-        rm -f $sshinfo
+        rm -f "$sshinfo"
         kill $pid
         sleep 1
       else

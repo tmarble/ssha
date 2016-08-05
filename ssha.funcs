@@ -4,20 +4,68 @@
 # environment variables take effect *in* your current interactive shell.
 # Other commands can be run with just ssha
 
-ssha_fun() { ssha_functions=true; verbose_ssha=--verbose; . $ssha; do_ssha_$1; unset ssha_functions; unset verbose_ssha;}
+# sourcing this simple script can setup your shell process
+# to use ssha. You can use the scripts in this directory like this:
+# NOTE: you *must* set SSHA_HOME first
+#
+# export SSHA_HOME=/path/to/ssha
+# . $SSHA_HOME/ssha.funcs
+
+# NOTE this usual pattern will NOT work when we source this file
+# program="$(basename $0)"
+# dir="$(dirname $0)"
+# cwd="$(pwd -P)"
+# cd "$dir"
+# SSHA_HOME_DEFAULT="$(pwd -P)"
+# cd "$cwd"
+# export SSHA_HOME="${SSHA_HOME:-$SSHA_HOME_DEFAULT}"
+export SSHA_HOME="${SSHA_HOME:-unset}"
+
+if [ "$SSHA_HOME" = "unset" ]; then
+    echo "error: SSHA_HOME not set"
+    # do NOT exit.. this file may be sourced!
+    # exit 1
+fi
+
+export ssha="$SSHA_HOME/ssha"
+alias ssha=". $SSHA_HOME/ssha"
+
+if [ ! -x "$ssha" ]; then
+    echo "error: ssha not found in $SSHA_HOME"
+    # do NOT exit.. this file may be sourced!
+    # exit 1
+fi
+
+ssha_fun() {
+    local action="$1"
+
+    ssha_functions=true
+    verbose_ssha=--verbose
+    . "$ssha"
+    do_ssha_$action
+    unset ssha_functions
+    unset verbose_ssha
+}
+ssha_check() { ssha_fun check; }
 ssha_connect() { ssha_fun connect; }
 ssha_start() { ssha_fun start; }
+ssha_restart() { ssha_fun restart; }
+ssha_stop() { ssha_fun stop; }
 ssha_passwordless() { ssha_fun passwordless; }
 
 ssh_ready() {
-  ssha_functions="true"
-  verbose_ssha="$verbose"
-  . $ssha
-  if do_ssha_passwordless; then
-    echo "ssh-agent ready"
-  else
-    echo "ssh-agent NOT ready"
-    return 1
-  fi
-  return 0
+    ssha_functions="true"
+    verbose_ssha="$verbose"
+    . "$ssha"
+    if do_ssha_passwordless; then
+        echo "ssh-agent ready"
+    else
+        echo "ssh-agent NOT ready"
+        return 1
+    fi
+    return 0
+}
+
+ssha_ready() {
+    ssh_ready
 }

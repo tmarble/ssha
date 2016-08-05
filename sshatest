@@ -11,6 +11,8 @@ sshafuncs=$dir/ssha.funcs
 . $sshafuncs
 
 if ssh_ready; then
-  echo "ready for ssh operations such as ssh, scp, rsync..."
+    echo "ready for ssh operations such as ssh, scp, rsync..."
+else
+    echo "error: unable to setup the ssh-agent"
+    exit 1
 fi
-

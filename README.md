@@ -21,11 +21,10 @@ On Debian systems the following packages are required:
 
 ## Usage
 
-One time configuration (e.g. in your ~/.bashrc):
+One time configuration (e.g. either in your ~/.bashrc or in a process
+that needs to access the ssh-agent):
 ```
-SSHA_HOME=$HOME/src/github/tmarble/ssha
-export ssha=$SSHA_HOME/ssha
-alias ssha=$SSHA_HOME/ssha
+export SSHA_HOME=$HOME/src/github/tmarble/ssha
 . $SSHA_HOME/ssha.funcs
 ```
 
@@ -74,3 +73,12 @@ Host *.amazonaws.com
    UserKnownHostsFile /dev/null
    LogLevel QUIET
 ```
+## functions available in ssha.funcs
+
+* **ssha_check** checks if the ssh-agent is running, returns 0 = yes, 1 = no, 2 = yes w/o identities
+* **ssha_start** starts the ssh-agent (or connect to a running one)
+* **ssha_stop** stops the ssh-agent
+* **ssha_restart** stops and restarts the ssh-agent
+* **ssha_connect** try to find and connect to a running ssh-agent
+* **ssha_passwordless** ensure ssh-agent is running with the default identity
+* **ssha_ready** like ssha_passwordless, will echo on the terminal if the ssh-agent is ready
