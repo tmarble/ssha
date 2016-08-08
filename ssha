@@ -216,7 +216,7 @@ do_ssha_passwordless() {
     vecho_ssha "connected to the ssh-agent"
   else
     vecho_ssha "not connected to the ssh-agent, starting one now..."
-    do_ssha_start
+    do_ssha_start_agent
   fi
   if ! do_ssha_check; then
     vecho_ssha "adding key to ssh-agent..."
