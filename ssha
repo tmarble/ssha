@@ -58,11 +58,11 @@ do_ssha_check() {
   local a
   vecho_ssha "--- ssha check ---"
   [ -z "$verbose_ssha" ]  || showenv_ssha
-  a="`ssh-add -l 2>&1 | head -1 | cut -c1-4`"
-  if [ "$a" = "2048" -o "$a" = "1024" ]; then
+  a="$(ssh-add -l 2>&1 | head -1 | awk '{print $1}')"
+  if [ "$a" = "2048" -o "$a" = "1024" -o "$a" = "256" ]; then
     vecho_ssha "connected to SSH agent (has at least one identity)"
   else
-    if [ "$a" = "The " ]; then
+    if [ "$a" = "The" ]; then
       vecho_ssha "connected to SSH agent (no identities.. do ssh-add now)"
       return 2
     else
