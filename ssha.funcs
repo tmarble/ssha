@@ -40,11 +40,11 @@ ssha_fun() {
     local action="$1"
 
     ssha_functions=true
-    verbose_ssha=--verbose
+    # verbose_ssha=--verbose
     . "$ssha"
     do_ssha_$action
     unset ssha_functions
-    unset verbose_ssha
+    # unset verbose_ssha
 }
 ssha_check() { ssha_fun check; }
 ssha_connect() { ssha_fun connect; }
@@ -55,7 +55,7 @@ ssha_passwordless() { ssha_fun passwordless; }
 
 ssh_ready() {
     ssha_functions="true"
-    verbose_ssha="$verbose"
+    # verbose_ssha="$verbose"
     . "$ssha"
     if do_ssha_passwordless; then
         echo "ssh-agent ready"
