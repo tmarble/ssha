@@ -55,7 +55,6 @@ ssha_passwordless() { ssha_fun passwordless; }
 
 ssh_ready() {
     ssha_functions="true"
-    # verbose_ssha="$verbose"
     . "$ssha"
     if do_ssha_passwordless; then
         echo 1>&2 "ssh-agent ready"
