@@ -22,7 +22,7 @@
 export SSHA_HOME="${SSHA_HOME:-unset}"
 
 if [ "$SSHA_HOME" = "unset" ]; then
-    echo "error: SSHA_HOME not set"
+    echo 1>&2 "error: SSHA_HOME not set"
     # do NOT exit.. this file may be sourced!
     # exit 1
 fi
@@ -31,7 +31,7 @@ export ssha="$SSHA_HOME/ssha"
 alias ssha=". $SSHA_HOME/ssha"
 
 if [ ! -x "$ssha" ]; then
-    echo "error: ssha not found in $SSHA_HOME"
+    echo 1>&2 "error: ssha not found in $SSHA_HOME"
     # do NOT exit.. this file may be sourced!
     # exit 1
 fi
@@ -58,9 +58,9 @@ ssh_ready() {
     # verbose_ssha="$verbose"
     . "$ssha"
     if do_ssha_passwordless; then
-        echo "ssh-agent ready"
+        echo 1>&2 "ssh-agent ready"
     else
-        echo "ssh-agent NOT ready"
+        echo 1>&2 "ssh-agent NOT ready"
         return 1
     fi
     return 0
