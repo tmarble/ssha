@@ -11,7 +11,7 @@ sshinfo="$ssh_dir/.ssh-agent-info"
 kernel_name="$(uname --kernel-name)"
 
 if [ ! -d "$ssh_dir" ]; then
-    echo "error: ssh directory does not exist: $ssh_dir"
+    echo >&2 "error: ssh directory does not exist: $ssh_dir"
     # do NOT exit.. this file may be sourced!
     # exit 1
 fi
@@ -27,7 +27,7 @@ vcmd_ssha () {
 
 err()
 {
-  echo "ssha: $*"
+  echo >&2 "ssha: $*"
 }
 
 do_ssha_usage() {
