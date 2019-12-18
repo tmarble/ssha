@@ -82,3 +82,7 @@ Host *.amazonaws.com
 * **ssha_connect** try to find and connect to a running ssh-agent
 * **ssha_passwordless** ensure ssh-agent is running with the default identity
 * **ssha_ready** like ssha_passwordless, will echo on the terminal if the ssh-agent is ready
+
+## TBD
+
+- Needs 2020 updates!
