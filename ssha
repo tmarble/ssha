@@ -8,7 +8,7 @@
 # program=$(basename $0)
 ssh_dir="$HOME/.ssh"
 sshinfo="$ssh_dir/.ssh-agent-info"
-kernel_name="$(uname --kernel-name)"
+kernel_name="$(uname -s)"
 
 if [ ! -d "$ssh_dir" ]; then
     echo >&2 "error: ssh directory does not exist: $ssh_dir"
